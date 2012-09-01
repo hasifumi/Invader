@@ -30,11 +30,12 @@ class Invader extends Game
     enemy = []
     total = 0
     @onload = =>
-      fighter = new Sprite(32, 32)
-      fighter.image = @assets["image/apple.png"]
-      fighter.x = @width/2
-      fighter.y = @height - 40
-      fighter._style.zIndex = 1
+      #fighter = new Sprite(32, 32)
+      #fighter.image = @assets["image/apple.png"]
+      #fighter.x = @width/2
+      #fighter.y = @height - 40
+      #fighter._style.zIndex = 1
+      fighter = new Fighter()
       @rootScene.addChild fighter
 
       beam = new Sprite(4, 16)
@@ -43,6 +44,7 @@ class Invader extends Game
       beam.y = fighter.y - 8
       beam.image = @assets["image/beam.png"]
       beam._style.zIndex = 2
+      #beam = new Beam(fighter)
       @rootScene.addChild beam
 
       @keybind(90, "a")
@@ -74,14 +76,14 @@ class Invader extends Game
             beam.flag = false
 
       moveFighter = =>
-        if @input.left
-          fighter.x -= 4
-          if fighter.x < 0
-            fighter.x = 0
-        if @input.right
-          fighter.x += 4
-          if fighter.x > (@width - fighter.width)
-            fighter.x = @width - fighter.width
+        #if @input.left
+        #  fighter.x -= 4
+        #  if fighter.x < 0
+        #    fighter.x = 0
+        #if @input.right
+        #  fighter.x += 4
+        #  if fighter.x > (@width - fighter.width)
+        #    fighter.x = @width - fighter.width
         if beam.flag is false
           beam.x = fighter.x + 14
           beam.y = fighter.y - 11
