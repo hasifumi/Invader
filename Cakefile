@@ -4,9 +4,9 @@ exec = (require 'child_process').exec
 FILENAME = 'game'
 FILES = [
   'coffee/game.coffee',
-  'coffee/dummy.coffee',
   'coffee/fighter.coffee',
   'coffee/beam.coffee',
+  'coffee/droid.coffee',
 ]
 HTMLFILE = 'index.html'
 
