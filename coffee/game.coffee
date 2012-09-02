@@ -90,7 +90,6 @@ class Invader extends Game
     @game.input.left  = false
   setFlag:(value)->
     @reverseFlag = value
-    console.log "reverseFlag:"+@reverseFlag
   setDX:(value)->
     @moveDX = value
   setDY:(value)->

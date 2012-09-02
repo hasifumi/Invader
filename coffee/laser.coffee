@@ -13,7 +13,6 @@ class Laser extends Sprite
     if @y >= 0
       @y += 8
     if @y > (@game.height + @height)
-      console.log "laser @y:"+@y
       @game.rootScene.removeChild @
       @game.removeLaser()
     if @intersect @fighter

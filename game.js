@@ -124,8 +124,7 @@
     };
 
     Invader.prototype.setFlag = function(value) {
-      this.reverseFlag = value;
-      return console.log("reverseFlag:" + this.reverseFlag);
+      return this.reverseFlag = value;
     };
 
     Invader.prototype.setDX = function(value) {
@@ -326,7 +325,6 @@
         this.y += 8;
       }
       if (this.y > (this.game.height + this.height)) {
-        console.log("laser @y:" + this.y);
         this.game.rootScene.removeChild(this);
         this.game.removeLaser();
       }
