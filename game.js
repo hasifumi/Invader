@@ -2,7 +2,8 @@
 (function() {
   var Beam, Droid, Fighter, Invader,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   enchant();
 
@@ -18,7 +19,7 @@
     };
 
     function Invader() {
-      var count, enemy, i, score, scoreLabel, total, _i, _len, _ref,
+      var count, i, score, scoreLabel, total, _i, _len, _ref,
         _this = this;
       Invader.__super__.constructor.call(this, this.config.WIDTH, this.config.HEIGHT);
       this.fps = this.config.FPS;
@@ -37,8 +38,14 @@
       this.rootScene.addChild(scoreLabel);
       score = 0;
       count = 0;
-      enemy = [];
+      this.enemy = [];
       total = 0;
+      this.reverseFlag = false;
+      this.setFlag(false);
+      this.moveDX = 0;
+      this.moveDY = 0;
+      this.setDX(4);
+      this.setDY(0);
       this.onload = function() {
         var beam, drawEnemy, hitCheck;
         _this.fighter = new Fighter();
@@ -49,28 +56,31 @@
         drawEnemy = function() {
           var droid, j, _j, _k;
           for (i = _j = 0; _j <= 5; i = ++_j) {
-            for (j = _k = 0; _k <= 1; j = ++_k) {
+            for (j = _k = 0; _k <= 7; j = ++_k) {
               droid = new Droid();
               droid.x = j * (32 + 10);
               droid.y = i * 32 + 30;
               _this.rootScene.addChild(droid);
-              enemy.push(droid);
+              _this.enemy.push(droid);
               count += 1;
             }
           }
           return total = count;
         };
         hitCheck = function() {
-          var _j, _len1;
-          for (_j = 0, _len1 = enemy.length; _j < _len1; _j++) {
-            i = enemy[_j];
+          var _j, _len1, _ref1;
+          _ref1 = _this.enemy;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            i = _ref1[_j];
             if (beam.intersect(i)) {
               beam.flag = false;
               i.y = -9999;
               score += 1;
               total -= 1;
               if (total < 1) {
-                setTimeout(drawEnemy(), 2000);
+                _this.rootScene.backgroundColor = "blue";
+                _this.stop();
+                alert("GAME CLEAR!!!");
               }
             }
           }
@@ -78,7 +88,9 @@
         };
         drawEnemy();
         _this.rootScene.addEventListener('enterframe', function() {
-          return hitCheck();
+          hitCheck();
+          _this.checkSide();
+          return _this.checkFlag();
         });
         _this.rootScene.addEventListener('touchstart', function(e) {
           return _this.updateTouch(e);
@@ -106,6 +118,45 @@
     Invader.prototype.clearTouch = function() {
       this.game.input.right = false;
       return this.game.input.left = false;
+    };
+
+    Invader.prototype.setFlag = function(value) {
+      this.reverseFlag = value;
+      return console.log("reverseFlag:" + this.reverseFlag);
+    };
+
+    Invader.prototype.setDX = function(value) {
+      return this.moveDX = value;
+    };
+
+    Invader.prototype.setDY = function(value) {
+      return this.moveDY = value;
+    };
+
+    Invader.prototype.checkSide = function() {
+      var i, _i, _len, _ref, _results;
+      _ref = this.enemy;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        if ((i.x < 0) || ((i.x + i.width) > this.game.width)) {
+          this.setFlag(true);
+          break;
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Invader.prototype.checkFlag = function() {
+      if (this.reverseFlag) {
+        this.moveDX = -1 * this.moveDX;
+        this.moveDY = 8;
+        return this.setFlag(false);
+      } else {
+        return this.moveDY = 0;
+      }
     };
 
     return Invader;
@@ -198,11 +249,35 @@
     __extends(Droid, _super);
 
     function Droid() {
+      this.checkGameOver = __bind(this.checkGameOver, this);
+
+      this.update = __bind(this.update, this);
+
+      var _this = this;
       Droid.__super__.constructor.call(this, 32, 32);
       this.game = enchant.Game.instance;
       this.image = this.game.assets["image/droid.png"];
       this._style.zIndex = 2;
+      this.addEventListener('enterframe', function() {
+        _this.update();
+        return _this.checkGameOver();
+      });
     }
+
+    Droid.prototype.update = function() {
+      if (this.game.frame % 3 === 0) {
+        this.x += this.game.moveDX;
+        return this.y += this.game.moveDY;
+      }
+    };
+
+    Droid.prototype.checkGameOver = function() {
+      if (this.y >= 415) {
+        this.game.rootScene.backgroundColor = "red";
+        this.game.stop();
+        alert("GAME OVER!!");
+      }
+    };
 
     return Droid;
 

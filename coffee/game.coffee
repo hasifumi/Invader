@@ -26,8 +26,14 @@ class Invader extends Game
     @rootScene.addChild scoreLabel
     score = 0
     count = 0
-    enemy = []
+    @enemy = []
     total = 0
+    @reverseFlag = false
+    @setFlag false
+    @moveDX = 0
+    @moveDY = 0
+    @setDX 4
+    @setDY 0
     @onload = =>
       @fighter = new Fighter()
       @rootScene.addChild @fighter
@@ -36,27 +42,32 @@ class Invader extends Game
       @keybind(90, "a")
       drawEnemy = =>
         for i in [0..5]
-          for j in [0..1]
+          for j in [0..7]
             droid = new Droid()
             droid.x = j * (32+10)
             droid.y = i * 32 + 30
             @rootScene.addChild droid
-            enemy.push droid
+            @enemy.push droid
             count += 1
         total = count
       hitCheck = =>
-        for i in enemy
+        for i in @enemy
           if beam.intersect(i)
             beam.flag = false
             i.y = -9999
             score += 1
             total -= 1
             if total < 1
-              setTimeout(drawEnemy(), 2000)
+              #setTimeout(drawEnemy(), 2000)
+              @rootScene.backgroundColor = "blue"
+              @stop()
+              alert "GAME CLEAR!!!"
         scoreLabel.text = "SCORE: "+score
       drawEnemy()
-      @rootScene.addEventListener 'enterframe', ->
+      @rootScene.addEventListener 'enterframe', =>
         hitCheck()
+        @checkSide()
+        @checkFlag()
       @rootScene.addEventListener 'touchstart', (e)=>
         @updateTouch(e)
       @rootScene.addEventListener 'touchmove', (e)=>
@@ -74,6 +85,25 @@ class Invader extends Game
   clearTouch:->
     @game.input.right = false
     @game.input.left  = false
+  setFlag:(value)->
+    @reverseFlag = value
+    console.log "reverseFlag:"+@reverseFlag
+  setDX:(value)->
+    @moveDX = value
+  setDY:(value)->
+    @moveDY = value
+  checkSide:->
+    for i in @enemy
+      if (i.x < 0) or ((i.x + i.width)> @game.width)
+        @setFlag true
+        break
+  checkFlag:->
+    if @reverseFlag
+      @moveDX = -1 * @moveDX
+      @moveDY = 8
+      @setFlag false
+    else
+      @moveDY = 0
 
 window.onload = ->
   new Invader
