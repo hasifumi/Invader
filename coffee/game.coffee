@@ -10,6 +10,7 @@ class Invader extends Game
       "image/beam.png"
       "image/droid.png"
     ],
+    MAXLASER: 4,
   }
   constructor:->
     super(@config.WIDTH, @config.HEIGHT)
@@ -34,6 +35,7 @@ class Invader extends Game
     @moveDY = 0
     @setDX 4
     @setDY 0
+    @cnt_laser = 0
     @onload = =>
       @fighter = new Fighter()
       @rootScene.addChild @fighter
@@ -68,6 +70,7 @@ class Invader extends Game
         hitCheck()
         @checkSide()
         @checkFlag()
+        @addLaser()
       @rootScene.addEventListener 'touchstart', (e)=>
         @updateTouch(e)
       @rootScene.addEventListener 'touchmove', (e)=>
@@ -104,6 +107,17 @@ class Invader extends Game
       @setFlag false
     else
       @moveDY = 0
+  addLaser:->
+    if @cnt_laser < @config.MAXLASER
+      pointer = Math.floor(Math.random() * 50)
+      if @enemy[pointer]?
+        lsr = new Laser(@enemy[pointer].x + 14, @enemy[pointer].y + 16, @fighter)
+        @rootScene.addChild lsr
+        @cnt_laser += 1
+        console.log "addLaser @cnt_laser:"+@cnt_laser
+  removeLaser:->
+    @cnt_laser -= 1
+    console.log "removeLaser @cnt_laser:"+@cnt_laser
 
 window.onload = ->
   new Invader

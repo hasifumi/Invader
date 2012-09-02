@@ -7,6 +7,7 @@ FILES = [
   'coffee/fighter.coffee',
   'coffee/beam.coffee',
   'coffee/droid.coffee',
+  'coffee/laser.coffee',
 ]
 HTMLFILE = 'index.html'
 
